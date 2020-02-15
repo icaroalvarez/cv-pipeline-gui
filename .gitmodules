@@ -1,0 +1,6 @@
+[submodule "modules/image-processors"]
+	path = modules/image-processors
+	url = git@github.com:icaroalvarez/image-processors.git
+[submodule "modules/panoramix"]
+	path = modules/panoramix
+	url = git@github.com:icaroalvarez/panoramix.git
