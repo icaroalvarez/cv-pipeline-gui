@@ -8,16 +8,16 @@
 class ProcessorWidget: public QWidget {
     Q_OBJECT
 public:
-    ProcessorWidget(PipelineController *controller, int indexTab);
+    ProcessorWidget(std::shared_ptr<PipelineController> controller, int indexTab);
 
     void setDebugImage(const cv::Mat& image);
 
 private:
-    PipelineController *controller;
+    std::shared_ptr<PipelineController> controller;
     QLabelMat imageLabel;
     QWidgetHandler widgetHandler;
     int indexTab;
 
 public slots:
-    void configureProcessor(const QString& paramName, const QVariant& value);
+    void configureProcessor(const QString& parameterName, const QVariant& parameterValue);
 };

@@ -16,13 +16,13 @@ class MainWindow : public QMainWindow, public Observer
 Q_OBJECT
 
 public:
-    explicit MainWindow(PipelineController* pipelineController, QWidget *parent = nullptr);
+    explicit MainWindow(std::shared_ptr<PipelineController> pipelineController, QWidget *parent = nullptr);
     ~MainWindow() override;
     void update() override;
 
 private:
     Ui::MainWindow *ui;
-    PipelineController* controller;
+    std::shared_ptr<PipelineController> controller;
     QTabWidget tabWidget;
     FrameSourceNavigationWidget frameSourceNavigation;
 };

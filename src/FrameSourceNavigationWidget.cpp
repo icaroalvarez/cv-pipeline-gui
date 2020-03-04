@@ -2,53 +2,49 @@
 #include "FrameSourceNavigationWidget.h"
 #include "easylogging++.h"
 
-FrameSourceNavigationWidget::FrameSourceNavigationWidget(PipelineController *controller)
-        :slider(Qt::Horizontal), controller(controller)
+FrameSourceNavigationWidget::FrameSourceNavigationWidget(std::shared_ptr<PipelineController> controller)
+        :slider(Qt::Horizontal), controller(std::move(controller))
 {
-    // add navigation slider
     slider.setMaximum(1);
 
-    // connect signals
     QObject::connect(&slider, &QSlider::valueChanged,
             this, &FrameSourceNavigationWidget::sliderValueChanged);
     QObject::connect(&slider, &QSlider::sliderReleased,
             this, &FrameSourceNavigationWidget::sliderReleased);
 
-    // create layout and add widgets
     this->setLayout(new QVBoxLayout());
     this->layout()->addWidget(&originalImageLabel);
     this->layout()->addWidget(&slider);
     this->layout()->addWidget(&indexLabel);
 
-    // load first image
-    originalImageLabel.setImage(controller->getCurrentLoadedImage());
+    originalImageLabel.setImage(this->controller->getCurrentLoadedImage());
     indexLabel.setText(QString::number(slider.tickInterval()));
 }
 
-void FrameSourceNavigationWidget::sliderValueChanged(int value) {
-    // check if user is pressed down the slider
-    if(!slider.isSliderDown()) {
+void FrameSourceNavigationWidget::sliderValueChanged(int value)
+{
+    if(not slider.isSliderDown())
+    {
         fireNewImage(value);
-
     }
 }
 
-void FrameSourceNavigationWidget::fireNewImage(int value) {
-    LOG(INFO) << "Slider value changed: " << value;
-    // show original image
+void FrameSourceNavigationWidget::fireNewImage(int index)
+{
+    LOG(INFO) << "Slider value changed: " << index;
+
     try{
         originalImageLabel.setImage(controller->getCurrentLoadedImage());
-        indexLabel.setText(QString::number(value));
-
-        // fire image processing
+        indexLabel.setText(QString::number(index));
         controller->firePipelineProcessing();
     }catch(const std::exception& e)
     {
-        LOG(WARNING) << "Not possible to process image at index: " << value <<
-                     ". Exception: " << e.what();
+        LOG(WARNING) << "Not possible to process image at index: " << index <<
+                     ". Exception message: " << e.what();
     }
 }
 
-void FrameSourceNavigationWidget::sliderReleased() {
+void FrameSourceNavigationWidget::sliderReleased()
+{
     fireNewImage(slider.value());
 }

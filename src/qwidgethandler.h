@@ -1,5 +1,4 @@
 #pragma once
-
 #include <QGridLayout>
 #include <QObject>
 #include <QScrollArea>
@@ -14,14 +13,14 @@ public:
     QWidget* createQWidgetFromParameters(const Parameters& parameters);
 
 private:
-    void addFloatControlTo(QLayout *layout, std::string name, float value, float minValue,
+    void addFloatControlTo(QLayout *layout, const std::string& name, float value, float minValue,
                            float maxValue, float step, int decimals);
 
-    void addIntControlTo(QLayout *layout, std::string name, int value, int minValue, int maxValue);
+    void addIntControlTo(QLayout *layout, const std::string& name, int value, int minValue, int maxValue);
 
-    void addBooleanControlTo(QLayout *layout, std::string name, bool value);
+    void addBooleanControlTo(QLayout *layout, const std::string& name, bool value);
 
-    void addOptionsControlTo(QLayout *layout, std::string name, std::vector<std::string> options, int selected);
+    void addOptionsControlTo(QLayout *layout, const std::string& name, const std::vector<std::string>& options, int selected);
 
 public slots:
     void receiveInt(int value);

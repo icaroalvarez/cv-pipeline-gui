@@ -12,7 +12,12 @@ endif()
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 
+message(${CMAKE_MODULE_PATH})
 find_package(Qt5Widgets)
+
+if (Qt5Widgets_FOUND)
+    message(STATUS "Qt Version Found:" ${Qt5Widgets_VERSION})
+endif()
 
 set(source_files
         main.cpp
@@ -26,15 +31,14 @@ set(source_files
 set(FORMS
         mainwindow.ui
         )
+
 qt5_wrap_ui(FORM_H ${FORMS})
 
-# Tell CMake to create the executable
 add_executable(gui
         ${source_files}
         ${FORM_H}
         ${LOGGING_SOURCES_FILES})
 
-#Link the helloworld executable to the Qt 5 widgets library.
 target_link_libraries(gui PRIVATE
         panoramix
         image_processors
@@ -43,7 +47,6 @@ target_link_libraries(gui PRIVATE
         CONAN_PKG::opencv
         )
 
-# Specify include directories or targets to use when compiling a given target
 target_include_directories(gui PRIVATE
         ../src
         )

@@ -7,50 +7,48 @@
 
 void QWidgetHandler::receiveInt(int value)
 {
-    QObject* pObject = sender();
-    configureProcessor(pObject->objectName(), value);
+    configureProcessor(sender()->objectName(), value);
 }
 
 void QWidgetHandler::receiveDouble(double value)
 {
-    QObject* pObject = sender();
-    configureProcessor(pObject->objectName(), value);
+    configureProcessor(sender()->objectName(), value);
 }
 
 void QWidgetHandler::receiveBool(bool value)
 {
-    QObject* pObject = sender();
-    configureProcessor(pObject->objectName(), value);
+    configureProcessor(sender()->objectName(), value);
 }
 
 void QWidgetHandler::receiveOption(int option_selected)
 {
-    QObject* pObject = sender();
-    configureProcessor(pObject->objectName(), option_selected);
+    configureProcessor(sender()->objectName(), option_selected);
 }
 
-void QWidgetHandler::addIntControlTo(QLayout *layout, std::string name, int value, int minValue, int maxValue) {
-    QHBoxLayout *hBoxLayout = new QHBoxLayout();
-    QLabel *label = new QLabel(QString::fromStdString(name));
-    QSpinBox *spinBox = new QSpinBox();
+void QWidgetHandler::addIntControlTo(QLayout *layout, const std::string& name, int value, int minValue, int maxValue)
+{
+    auto *hBoxLayout{new QHBoxLayout()};
+    auto *label{new QLabel(QString::fromStdString(name))};
+    auto *spinBox{new QSpinBox()};
     spinBox->setMaximum(maxValue);
     spinBox->setMinimum(minValue);
     spinBox->setValue(value);
     spinBox->QObject::setObjectName(QString::fromStdString(name));
 
-    QObject::connect(spinBox, SIGNAL(valueChanged(int)), this, SLOT(receiveInt(int)));
+    QObject::connect(spinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &QWidgetHandler::receiveInt);
     hBoxLayout->addWidget(label);
     hBoxLayout->addWidget(spinBox);
-    QWidget *widgetInt = new QWidget();
+    auto *widgetInt{new QWidget()};
     widgetInt->setLayout(hBoxLayout);
     layout->addWidget(widgetInt);
 }
 
-void QWidgetHandler::addFloatControlTo(QLayout *layout, std::string name, float value, float minValue,
-                                       float maxValue, float step, int decimals) {
-    QHBoxLayout *hBoxLayout = new QHBoxLayout();
-    QLabel *label = new QLabel(QString::fromStdString(name));
-    QDoubleSpinBox *spinBox = new QDoubleSpinBox();
+void QWidgetHandler::addFloatControlTo(QLayout *layout, const std::string& name, float value, float minValue,
+                                       float maxValue, float step, int decimals)
+{
+    auto *hBoxLayout{new QHBoxLayout()};
+    auto *label{new QLabel(QString::fromStdString(name))};
+    auto *spinBox{new QDoubleSpinBox()};
     spinBox->setDecimals(decimals);
     spinBox->setMaximum(maxValue);
     spinBox->setMinimum(minValue);
@@ -58,32 +56,35 @@ void QWidgetHandler::addFloatControlTo(QLayout *layout, std::string name, float 
     spinBox->setValue(value);
     spinBox->QObject::setObjectName(QString::fromStdString(name));
 
-    QObject::connect(spinBox, SIGNAL(valueChanged(double)), this, SLOT(receiveDouble(double)));
+    QObject::connect(spinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+                     this, &QWidgetHandler::receiveDouble);
     hBoxLayout->addWidget(label);
     hBoxLayout->addWidget(spinBox);
-    QWidget *widget = new QWidget();
+    auto *widget{new QWidget()};
     widget->setLayout(hBoxLayout);
     layout->addWidget(widget);
 }
 
-void QWidgetHandler::addBooleanControlTo(QLayout *layout, std::string name, bool value) {
-    QCheckBox *checkbox = new QCheckBox(QString::fromStdString(name));
+void QWidgetHandler::addBooleanControlTo(QLayout *layout, const std::string& name, bool value)
+{
+    auto *checkbox{new QCheckBox(QString::fromStdString(name))};
     checkbox->setChecked(value);
     checkbox->QObject::setObjectName(QString::fromStdString(name));
-    QObject::connect(checkbox, SIGNAL(toggled(bool)), this, SLOT(receiveBool(bool)));
+    QObject::connect(checkbox, &QCheckBox::toggled, this, &QWidgetHandler::receiveBool);
     layout->addWidget(checkbox);
 }
 
-void QWidgetHandler::addOptionsControlTo(QLayout *layout, std::string name,
-        std::vector<std::string> options, int selected)
+void QWidgetHandler::addOptionsControlTo(QLayout *layout, const std::string& name,
+                                         const std::vector<std::string>& options, int selected)
 {
-    QComboBox *comboBox = new QComboBox();
-    for (auto& option : options) {
+    auto *comboBox{new QComboBox()};
+    for (const auto& option : options)
+    {
         comboBox->addItem(QString::fromStdString(option));
         comboBox->QObject::setObjectName(QString::fromStdString(name));
         comboBox->setCurrentIndex(selected);
-        QObject::connect(comboBox, SIGNAL(currentIndexChanged(int)),
-                this, SLOT(receiveOption(int)));
+        QObject::connect(comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
+                         this, &QWidgetHandler::receiveOption);
         layout->addWidget(comboBox);
     }
 }
@@ -118,7 +119,7 @@ QWidget* QWidgetHandler::createQWidgetFromParameters(const Parameters& parameter
                 [&](OptionsParameter optionsParameter)
                 {
                     addOptionsControlTo(widget->layout(), parameterName,
-                            optionsParameter.options, optionsParameter.selectedOptionIndex);
+                                        optionsParameter.options, optionsParameter.selectedOptionIndex);
                 }
         }, parameter.second);
     }

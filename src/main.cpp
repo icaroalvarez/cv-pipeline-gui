@@ -5,18 +5,19 @@
 
 INITIALIZE_EASYLOGGINGPP
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     QApplication a(argc, argv);
 
-    PipelineController controller;
+    const auto controller{std::make_shared<PipelineController>()};
     Registerer::registerProcessors(controller);
     const std::vector<std::string> pipeLineDescription{"adaptive_threshold", "roi", "resize"};
-    controller.loadPipeline(pipeLineDescription);
+    controller->loadPipeline(pipeLineDescription);
 
     std::string path("/home/ialvarez/Code/panoramix/test/fixtures/Lenna.png");
-    controller.loadFrameSourceFrom(path);
+    controller->loadFrameSourceFrom(path);
 
-    MainWindow window(&controller);
+    MainWindow window(controller);
     window.show();
     //window.setWindowState(Qt::WindowMaximized);
 

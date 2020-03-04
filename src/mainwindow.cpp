@@ -3,28 +3,25 @@
 #include "ProcessorWidget.h"
 #include "easylogging++.h"
 
-MainWindow::MainWindow(PipelineController* pipelineController, QWidget *parent) :
+MainWindow::MainWindow(std::shared_ptr<PipelineController> pipelineController, QWidget *parent) :
         QMainWindow(parent),
         ui(new Ui::MainWindow),
-        controller{pipelineController},
+        controller{std::move(pipelineController)},
         frameSourceNavigation(controller)
 {
     ui->setupUi(this);
-
-    // create vertical layout
     ui->centralWidget->setLayout(new QHBoxLayout());
     ui->centralWidget->layout()->setSizeConstraint(QLayout::SetMinimumSize);
 
     // create tabs with each processors processor
-    for(auto &processor : controller->getPipelineDescription())
+    for(const auto &processor : controller->getPipelineDescription())
     {
-        // add processor widget
-        auto* processorWidget = new ProcessorWidget(controller, tabWidget.count());
+        auto* processorWidget{new ProcessorWidget(controller, tabWidget.count())};
         tabWidget.addTab(processorWidget, QString::fromStdString(processor));
     }
 
     // add widgets to splitter
-    auto *splitter = new QSplitter();
+    auto *splitter{new QSplitter()};
     splitter->addWidget(&frameSourceNavigation);
     splitter->addWidget(&tabWidget);
     ui->centralWidget->layout()->addWidget(splitter);
@@ -33,7 +30,6 @@ MainWindow::MainWindow(PipelineController* pipelineController, QWidget *parent) 
 
     // register main window as an observer of controller to be notified when image processing is finished
     controller->registerObserver(this);
-
     frameSourceNavigation.sliderReleased();
 }
 
@@ -42,12 +38,15 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::update() {
-    for(int iTab = 0; iTab < tabWidget.count(); iTab++)
+void MainWindow::update()
+{
+    for(int processorImageIndex = 0; processorImageIndex < tabWidget.count(); processorImageIndex++)
     {
-        try {
-            dynamic_cast<ProcessorWidget *>(tabWidget.widget(iTab))->setDebugImage(controller->getDebugImage(
-                    static_cast<unsigned int>(iTab)));
+        try
+        {
+            const auto debugImage{controller->getDebugImage(static_cast<unsigned int>(processorImageIndex))};
+            const auto processorWidget{dynamic_cast<ProcessorWidget *>(tabWidget.widget(processorImageIndex))};
+            processorWidget->setDebugImage(debugImage);
         }catch(const std::exception& e)
         {
             LOG(WARNING) << e.what();

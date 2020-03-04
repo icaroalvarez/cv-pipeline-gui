@@ -8,19 +8,16 @@
 class FrameSourceNavigationWidget: public QWidget {
     Q_OBJECT
 public:
-    FrameSourceNavigationWidget(PipelineController *controller);
-    void moveSliderRight();
-    void moveSliderLeft();
+    explicit FrameSourceNavigationWidget(std::shared_ptr<PipelineController> controller);
 
 private:
     QSlider slider;
     QLabel indexLabel;
-    PipelineController *controller;
+    std::shared_ptr<PipelineController> controller;
     QLabelMat originalImageLabel;
 
 public slots:
     void sliderValueChanged(int value);
     void sliderReleased();
-
-    void fireNewImage(int value);
+    void fireNewImage(int index);
 };
