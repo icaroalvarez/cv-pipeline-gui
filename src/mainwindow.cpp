@@ -29,7 +29,6 @@ MainWindow::MainWindow(std::shared_ptr<PipelineController> pipelineController, Q
     splitter->setStretchFactor(1, 5);
 
     // register main window as an observer of controller to be notified when image processing is finished
-    controller->registerObserver(this);
     frameSourceNavigation.sliderReleased();
 }
 

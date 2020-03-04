@@ -17,8 +17,9 @@ int main(int argc, char *argv[])
     std::string path("/home/ialvarez/Code/panoramix/test/fixtures/Lenna.png");
     controller->loadFrameSourceFrom(path);
 
-    MainWindow window(controller);
-    window.show();
+    const auto window{std::make_shared<MainWindow>(controller)};
+    controller->registerObserver(window);
+    window->show();
     //window.setWindowState(Qt::WindowMaximized);
 
     return a.exec();
