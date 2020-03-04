@@ -3,17 +3,15 @@
 #include <QGridLayout>
 #include <QObject>
 #include <QScrollArea>
-#include <ProcessorConfiguration.h>
+#include <ProcessorParameters.h>
 #include <QtCore/QVariant>
-#include <nlohmann/json.hpp>
 
 class QWidgetHandler: public QObject
 {
 Q_OBJECT
 
 public:
-    QWidget* createQWidgetFromJson(nlohmann::json configuration);
-    QWidget* createQWidget(nlohmann::json configuration);
+    QWidget* createQWidgetFromParameters(const Parameters& parameters);
 
 private:
     void addFloatControlTo(QLayout *layout, std::string name, float value, float minValue,

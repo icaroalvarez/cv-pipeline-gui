@@ -4,7 +4,6 @@
 #include <QCheckBox>
 #include <QComboBox>
 #include "easylogging++.h"
-using json = nlohmann::json;
 
 void QWidgetHandler::receiveInt(int value)
 {
@@ -89,32 +88,39 @@ void QWidgetHandler::addOptionsControlTo(QLayout *layout, std::string name,
     }
 }
 
-QWidget* QWidgetHandler::createQWidgetFromJson(json configuration)
+// overloaded helper from std::variant documentation
+template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>; // not needed as of C++20
+QWidget* QWidgetHandler::createQWidgetFromParameters(const Parameters& parameters)
 {
-    LOG(INFO) << "Creating QWidget from configuration: " << configuration;
     QWidget *widget = new QWidget();
     widget->setLayout(new QVBoxLayout());
 
-    for(auto &param : configuration)
+    for(const auto &parameter : parameters)
     {
-        if(param["type"] == "integer")
-        {
-            addIntControlTo(widget->layout(), param["name"], param["value"],
-                             param["min_value"], param["max_value"]);
-        }else if(param["type"] == "float")
-        {
-            addFloatControlTo(widget->layout(), param["name"], param["value"],
-                              param["min_value"], param["max_value"], param["step"], param["decimals"]);
-        }else if(param["type"] == "boolean")
-        {
-            addBooleanControlTo(widget->layout(), param["name"], param["value"]);
-        }else if(param["type"] == "options")
-        {
-            addOptionsControlTo(widget->layout(), param["name"], param["options"], param["value"]);
-        }else{
-            std::string paramType = param["type"];
-            throw std::invalid_argument("Unknown parameter type: " + paramType);
-        }
+        const auto parameterName{parameter.first};
+        std::visit(overloaded{
+                [&](IntegerParameter integerParameter)
+                {
+                    addIntControlTo(widget->layout(), parameterName, integerParameter.value,
+                                    integerParameter.minValue, integerParameter.maxValue);
+                },
+                [&](DecimalParameter decimalParameter)
+                {
+                    addFloatControlTo(widget->layout(), parameterName, decimalParameter.value,
+                                      decimalParameter.minValue, decimalParameter.maxValue,
+                                      decimalParameter.incrementalStep, decimalParameter.decimalsPlaces);
+                },
+                [&](bool value)
+                {
+                    addBooleanControlTo(widget->layout(), parameterName, value);
+                },
+                [&](OptionsParameter optionsParameter)
+                {
+                    addOptionsControlTo(widget->layout(), parameterName,
+                            optionsParameter.options, optionsParameter.selectedOptionIndex);
+                }
+        }, parameter.second);
     }
     return widget;
 }

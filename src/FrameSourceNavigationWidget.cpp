@@ -41,7 +41,7 @@ void FrameSourceNavigationWidget::fireNewImage(int value) {
         indexLabel.setText(QString::number(value));
 
         // fire image processing
-        controller->processCurrentImage();
+        controller->firePipelineProcessing();
     }catch(const std::exception& e)
     {
         LOG(WARNING) << "Not possible to process image at index: " << value <<

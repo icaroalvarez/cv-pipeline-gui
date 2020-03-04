@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
     controller.loadPipeline(pipeLineDescription);
 
     std::string path("/home/ialvarez/Code/panoramix/test/fixtures/Lenna.png");
-    controller.loadImage(path);
+    controller.loadFrameSourceFrom(path);
 
     MainWindow window(&controller);
     window.show();

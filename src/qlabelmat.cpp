@@ -32,7 +32,7 @@ QImage QLabelMat::createQImageFrom(cv::Mat image)
     QImage qImage;
     if(image.channels() > 1)
     {
-        cv::cvtColor(image, image, CV_BGR2RGB);
+        cv::cvtColor(image, image, cv::COLOR_BGR2RGB);
         qImage = QImage((const uchar*) image.data, image.cols,
                         image.rows, static_cast<int>(image.step), QImage::Format_RGB888);
         qImage.bits();

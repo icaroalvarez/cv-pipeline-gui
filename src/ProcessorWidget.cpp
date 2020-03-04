@@ -3,59 +3,46 @@
 #include "ProcessorWidget.h"
 #include "easylogging++.h"
 
-using json = nlohmann::json;
-
 ProcessorWidget::ProcessorWidget(PipelineController *controller, int indexTab)
         :controller(controller), indexTab(indexTab)
 {
-    // set vertical layout
     this->setLayout(new QVBoxLayout());
 
-    // add image label
     this->layout()->addWidget(&imageLabel);
 
-    // get processor configuration
-    auto configuration = controller->getProcessorConfigurationFrom(static_cast<unsigned int>(indexTab));
+    const auto parameters{controller->getProcessorParameters(static_cast<unsigned int>(indexTab))};
 
-    // add configuration widget
-    this->layout()->addWidget(widgetHandler.createQWidgetFromJson(configuration));
+    this->layout()->addWidget(widgetHandler.createQWidgetFromParameters(parameters));
 
-    // connect configuration widget
+    // connect parameters widget
     QObject::connect(&widgetHandler, SIGNAL(configureProcessor(QString, QVariant)),
                      this, SLOT(configureProcessor(QString, QVariant)));
 
-    // process current image
-    controller->processCurrentImage();
+    controller->firePipelineProcessing();
 }
 
-void ProcessorWidget::configureProcessor(QString paramName, QVariant value)
+void ProcessorWidget::configureProcessor(const QString& paramName, const QVariant& value)
 {
-    json parameter{{"name", paramName.toStdString()}};
+    Configuration configuration;
 
-    if(!std::string(value.typeName()).compare("int"))
+    if(std::string(value.typeName()) == "int")
     {
-        parameter["value"] = value.toInt();
-    }else if(!std::string(value.typeName()).compare("double"))
+        configuration[paramName.toStdString()] = value.toInt();
+    }else if(std::string(value.typeName()) == "double")
     {
-        parameter["value"] = value.toFloat();
-    }else if(!std::string(value.typeName()).compare("bool"))
+        configuration[paramName.toStdString()] = value.toDouble();
+    }else if(std::string(value.typeName()) == "bool")
     {
-        parameter["value"] = value.toBool();
-    }else if(!std::string(value.typeName()).compare("QString"))
+        configuration[paramName.toStdString()] = value.toBool();
+    }else if(std::string(value.typeName()) == "QString")
     {
-        parameter["value"] = value.toInt();
+        configuration[paramName.toStdString()] = value.toInt();
     }else{
         throw std::invalid_argument("Processor widget receive unknown parameter: "+std::string(value.typeName()));
     }
 
-    json configuration;
-    configuration.push_back(parameter);
-
-    // configure processor
     controller->configureProcessor(static_cast<unsigned int>(indexTab), configuration);
-
-    // fire new process
-    controller->processCurrentImage();
+    controller->firePipelineProcessing();
 }
 
 void ProcessorWidget::setDebugImage(const cv::Mat& image) {

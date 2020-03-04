@@ -4,6 +4,11 @@ project(PanoramixQtWidget)
 set(CMAKE_CXX_STANDARD 17)
 message("CMake build type: " ${CMAKE_BUILD_TYPE})
 
+include(.conan/conanbuildinfo.cmake)
+include(modules/image-processors/.conan/conanbuildinfo.cmake)
+include(modules/panoramix/.conan/conanbuildinfo.cmake)
+conan_basic_setup(TARGETS)
+
 add_subdirectory(3rd-party)
 add_subdirectory(modules/panoramix)
 add_subdirectory(modules/image-processors)

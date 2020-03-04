@@ -19,5 +19,5 @@ private:
     int indexTab;
 
 public slots:
-    void configureProcessor(QString paramName, QVariant value);
+    void configureProcessor(const QString& paramName, const QVariant& value);
 };

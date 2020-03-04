@@ -28,24 +28,22 @@ set(FORMS
         )
 qt5_wrap_ui(FORM_H ${FORMS})
 
-# Tell CMake to create the helloworld executable
+# Tell CMake to create the executable
 add_executable(gui
         ${source_files}
         ${FORM_H}
         ${LOGGING_SOURCES_FILES})
 
-find_package( OpenCV REQUIRED )
-
 #Link the helloworld executable to the Qt 5 widgets library.
-target_link_libraries(gui panoramix image_processors Qt5::Widgets ${OpenCV_LIBS} easylogging)
+target_link_libraries(gui PRIVATE
+        panoramix
+        image_processors
+        Qt5::Widgets
+        easylogging
+        CONAN_PKG::opencv
+        )
 
 # Specify include directories or targets to use when compiling a given target
 target_include_directories(gui PRIVATE
         ../src
-        ../modules/panoramix/src
-        ../modules/image-processors/src
         )
-
-#Make a top-level <target> depend on other top-level targets to ensure that they build before <target> does
-add_dependencies(gui
-        panoramix)
