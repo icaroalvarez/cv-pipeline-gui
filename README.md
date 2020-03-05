@@ -32,3 +32,4 @@ make
 
 ## TODO
 - Use easylogging conan package
+- Unit testing
