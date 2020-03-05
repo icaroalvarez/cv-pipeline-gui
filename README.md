@@ -29,3 +29,6 @@ mkdir build && cd build
 cmake ..
 make
 ```
+
+## TODO
+- Use easylogging conan package
