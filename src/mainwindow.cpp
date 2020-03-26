@@ -39,6 +39,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::update()
 {
+    frameSourceNavigation.setOriginalImage(controller->getCurrentLoadedImage());
     for(int processorImageIndex = 0; processorImageIndex < tabWidget.count(); processorImageIndex++)
     {
         try

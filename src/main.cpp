@@ -36,11 +36,6 @@ int main(int argc, char *argv[])
     const auto controller{std::make_shared<PipelineController>()};
     Registerer::registerProcessors(controller);
     controller->loadPipelineFromJson(configurationFile);
-    const std::vector<std::string> pipeLineDescription{"adaptive_threshold", "roi", "resize"};
-//    controller->loadPipeline(pipeLineDescription);
-
-//    std::string path("/home/ialvarez/Code/panoramix/test/fixtures/Lenna.png");
-//    controller->loadFrameSourceFrom(path);
 
     const auto window{std::make_shared<MainWindow>(controller)};
     controller->registerObserver(window);

@@ -1,4 +1,0 @@
-{
-  "input_image_path": "/home/ialvarez/Code/panoramix-qt/modules/panoramix/test/fixtures/Lenna.png",
-  "image_processors_to_be_loaded": ["adaptive_threshold", "roi", "resize"]
-}

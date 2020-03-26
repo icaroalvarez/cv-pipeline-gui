@@ -37,14 +37,14 @@ qt5_wrap_ui(FORM_H ${FORMS})
 add_executable(gui
         ${source_files}
         ${FORM_H}
-        ${LOGGING_SOURCES_FILES})
+        )
 
 target_link_libraries(gui PRIVATE
         panoramix
         image_processors
         Qt5::Widgets
-        easylogging
         CONAN_PKG::opencv
+        CONAN_PKG::easyloggingpp
         )
 
 target_include_directories(gui PRIVATE

@@ -5,7 +5,7 @@
 FrameSourceNavigationWidget::FrameSourceNavigationWidget(std::shared_ptr<PipelineController> controller)
         :slider(Qt::Horizontal), controller(std::move(controller))
 {
-    slider.setMaximum(1);
+    slider.setMaximum(this->controller->getTotalFrames()-1);
 
     QObject::connect(&slider, &QSlider::valueChanged,
             this, &FrameSourceNavigationWidget::sliderValueChanged);
@@ -34,8 +34,8 @@ void FrameSourceNavigationWidget::fireNewImage(int index)
     LOG(INFO) << "Slider value changed: " << index;
 
     try{
-        originalImageLabel.setImage(controller->getCurrentLoadedImage());
         indexLabel.setText(QString::number(index));
+        controller->setFrameSourceIndex(index);
         controller->firePipelineProcessing();
     }catch(const std::exception& e)
     {
@@ -47,4 +47,9 @@ void FrameSourceNavigationWidget::fireNewImage(int index)
 void FrameSourceNavigationWidget::sliderReleased()
 {
     fireNewImage(slider.value());
+}
+
+void FrameSourceNavigationWidget::setOriginalImage(const cv::Mat &image)
+{
+    originalImageLabel.setImage(image);
 }

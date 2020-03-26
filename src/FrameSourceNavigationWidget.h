@@ -9,6 +9,7 @@ class FrameSourceNavigationWidget: public QWidget {
     Q_OBJECT
 public:
     explicit FrameSourceNavigationWidget(std::shared_ptr<PipelineController> controller);
+    void setOriginalImage(const cv::Mat& image);
 
 private:
     QSlider slider;
