@@ -17,18 +17,18 @@ void ProcessorWidget::configureProcessor(const QString& parameterName, const QVa
 {
     Configuration configuration;
 
-    if(std::string(parameterValue.typeName()) == "int")
+    if(parameterValue.type() == QVariant::Type::Int)
     {
         configuration[parameterName.toStdString()] = parameterValue.toInt();
-    }else if(std::string(parameterValue.typeName()) == "double")
+    }else if(parameterValue.type() == QVariant::Type::Double)
     {
         configuration[parameterName.toStdString()] = parameterValue.toDouble();
-    }else if(std::string(parameterValue.typeName()) == "bool")
+    }else if(parameterValue.type() == QVariant::Type::Bool)
     {
         configuration[parameterName.toStdString()] = parameterValue.toBool();
-    }else if(std::string(parameterValue.typeName()) == "QString")
+    }else if(parameterValue.type() == QVariant::Type::UInt)
     {
-        configuration[parameterName.toStdString()] = parameterValue.toInt();
+        configuration[parameterName.toStdString()] = static_cast<std::size_t>(parameterValue.toInt());
     }else{
         throw std::invalid_argument("Processor widget receive unknown parameter: "+std::string(parameterValue.typeName()));
     }

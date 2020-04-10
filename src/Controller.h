@@ -31,6 +31,7 @@ private:
 public slots:
     void receiveProcessorConfiguration(unsigned int index, const Configuration& configuration);
     void firePipelineProcessing(unsigned int frameIndex);
+    void savePipelineConfiguration(const std::string& path);
 };
 
 

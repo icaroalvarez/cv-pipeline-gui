@@ -1,9 +1,60 @@
 {
-  "frame_source_path": "/home/ialvarez/Downloads/solidWhiteRight.mp4",
-  "image_processors": [
-    {
-      "name": "roi",
-      "configuration": []
-    }
-  ]
+    "frame_source_path": "/home/ialvarez/Downloads/solidWhiteRight.mp4",
+    "image_processors": [
+        {
+            "configuration": [
+                {
+                    "parameter_name": "bottom_left_x",
+                    "parameter_type": "integer",
+                    "value": 0
+                },
+                {
+                    "parameter_name": "top_left_x",
+                    "parameter_type": "integer",
+                    "value": 0
+                },
+                {
+                    "parameter_name": "bottom_right_x",
+                    "parameter_type": "integer",
+                    "value": 954
+                },
+                {
+                    "parameter_name": "top_left_y",
+                    "parameter_type": "integer",
+                    "value": 388
+                },
+                {
+                    "parameter_name": "bottom_right_y",
+                    "parameter_type": "integer",
+                    "value": 539
+                },
+                {
+                    "parameter_name": "bottom_left_y",
+                    "parameter_type": "integer",
+                    "value": 539
+                },
+                {
+                    "parameter_name": "top_right_x",
+                    "parameter_type": "integer",
+                    "value": 477
+                },
+                {
+                    "parameter_name": "top_right_y",
+                    "parameter_type": "integer",
+                    "value": 291
+                }
+            ],
+            "name": "roi"
+        },
+        {
+            "configuration": [
+                {
+                    "parameter_name": "output",
+                    "parameter_type": "options",
+                    "value": 0
+                }
+            ],
+            "name": "color_space"
+        }
+    ]
 }

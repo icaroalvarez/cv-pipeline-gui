@@ -1,3 +1,4 @@
+#include <QtWidgets/QFileDialog>
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "ProcessorWidget.h"
@@ -19,6 +20,12 @@ MainWindow::MainWindow(QWidget *parent) :
     splitter->setStretchFactor(0, 1);
     splitter->setStretchFactor(1, 5);
 
+    auto pipelineMenu{this->menuBar()->addMenu(tr("&Pipeline"))};
+    auto savePipelineConfigurationAction{new QAction(tr("&Save configuration..."), this)};
+    savePipelineConfigurationAction->setStatusTip(tr("Save current configuration to file"));
+    connect(savePipelineConfigurationAction, &QAction::triggered, this, &MainWindow::savePipelineConfiguration);
+    pipelineMenu->addAction(savePipelineConfigurationAction);
+
     QObject::connect(&frameSourceNavigation, &FrameSourceNavigationWidget::firePipelineProcessing,
                      this, &MainWindow::firePipelineProcessing);
 }
@@ -38,7 +45,7 @@ void MainWindow::createProcessorTabs(const ProcessorsParameters& processorsParam
         tabWidget.addTab(processorWidget, QString::fromStdString(processorName));
 
         QObject::connect(processorWidget, &ProcessorWidget::sendProcessorConfiguration,
-                this, &MainWindow::sendProcessorConfiguration);
+                         this, &MainWindow::sendProcessorConfiguration);
     }
 }
 
@@ -57,4 +64,12 @@ void MainWindow::setDebugImage(unsigned int processorIndex, const cv::Mat &image
 void MainWindow::setTotalFrames(unsigned int totalFrames)
 {
     frameSourceNavigation.setTotalFrames(totalFrames);
+}
+
+void MainWindow::savePipelineConfiguration()
+{
+    const auto fileName{QFileDialog::getSaveFileName(this,
+                                                     tr("Save pipeline configuration"),
+                                                     "/home/", tr("Json Files (*.json)"))};
+    emit sendSavePipelineConfiguration(fileName.toStdString());
 }

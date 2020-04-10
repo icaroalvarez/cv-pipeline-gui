@@ -32,4 +32,8 @@ private:
 signals:
     void sendProcessorConfiguration(unsigned int index, const Configuration& configuration);
     void firePipelineProcessing(unsigned int frameIndex);
+    void sendSavePipelineConfiguration(const std::string& path);
+
+public slots:
+    void savePipelineConfiguration();
 };

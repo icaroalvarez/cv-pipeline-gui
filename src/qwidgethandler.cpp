@@ -3,6 +3,7 @@
 #include <QSpinBox>
 #include <QCheckBox>
 #include <QComboBox>
+#include <QtWidgets/QFormLayout>
 #include "easylogging++.h"
 
 void QWidgetHandler::receiveInt(int value)
@@ -22,71 +23,61 @@ void QWidgetHandler::receiveBool(bool value)
 
 void QWidgetHandler::receiveOption(int option_selected)
 {
-    configureProcessor(sender()->objectName(), option_selected);
+    configureProcessor(sender()->objectName(), static_cast<unsigned int>(option_selected));
 }
 
 void QWidgetHandler::addIntControlTo(QLayout *layout, const std::string& name, int value, int minValue, int maxValue)
 {
-    auto *hBoxLayout{new QHBoxLayout()};
-    auto *label{new QLabel(QString::fromStdString(name))};
-    auto *spinBox{new QSpinBox()};
+    auto spinBox{new QSpinBox()};
     spinBox->setMaximum(maxValue);
     spinBox->setMinimum(minValue);
     spinBox->setValue(value);
     spinBox->QObject::setObjectName(QString::fromStdString(name));
-
     QObject::connect(spinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &QWidgetHandler::receiveInt);
-    hBoxLayout->addWidget(label);
-    hBoxLayout->addWidget(spinBox);
-    auto *widgetInt{new QWidget()};
-    widgetInt->setLayout(hBoxLayout);
-    layout->addWidget(widgetInt);
+    auto gridLayout{dynamic_cast<QFormLayout*>(layout)};
+    gridLayout->addRow(QString::fromStdString(name), spinBox);
 }
 
 void QWidgetHandler::addFloatControlTo(QLayout *layout, const std::string& name, float value, float minValue,
                                        float maxValue, float step, int decimals)
 {
-    auto *hBoxLayout{new QHBoxLayout()};
-    auto *label{new QLabel(QString::fromStdString(name))};
-    auto *spinBox{new QDoubleSpinBox()};
+    auto spinBox{new QDoubleSpinBox()};
     spinBox->setDecimals(decimals);
     spinBox->setMaximum(maxValue);
     spinBox->setMinimum(minValue);
     spinBox->setSingleStep(step);
     spinBox->setValue(value);
     spinBox->QObject::setObjectName(QString::fromStdString(name));
-
     QObject::connect(spinBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
                      this, &QWidgetHandler::receiveDouble);
-    hBoxLayout->addWidget(label);
-    hBoxLayout->addWidget(spinBox);
-    auto *widget{new QWidget()};
-    widget->setLayout(hBoxLayout);
-    layout->addWidget(widget);
+    auto gridLayout{dynamic_cast<QFormLayout*>(layout)};
+    gridLayout->addRow(QString::fromStdString(name), spinBox);
 }
 
 void QWidgetHandler::addBooleanControlTo(QLayout *layout, const std::string& name, bool value)
 {
-    auto *checkbox{new QCheckBox(QString::fromStdString(name))};
+    auto checkbox{new QCheckBox()};
     checkbox->setChecked(value);
     checkbox->QObject::setObjectName(QString::fromStdString(name));
     QObject::connect(checkbox, &QCheckBox::toggled, this, &QWidgetHandler::receiveBool);
-    layout->addWidget(checkbox);
+    auto gridLayout{dynamic_cast<QFormLayout*>(layout)};
+    gridLayout->addRow(QString::fromStdString(name), checkbox);
 }
 
 void QWidgetHandler::addOptionsControlTo(QLayout *layout, const std::string& name,
                                          const std::vector<std::string>& options, int selected)
 {
-    auto *comboBox{new QComboBox()};
+    auto comboBox{new QComboBox()};
     for (const auto& option : options)
     {
         comboBox->addItem(QString::fromStdString(option));
-        comboBox->QObject::setObjectName(QString::fromStdString(name));
-        comboBox->setCurrentIndex(selected);
-        QObject::connect(comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
-                         this, &QWidgetHandler::receiveOption);
-        layout->addWidget(comboBox);
     }
+    comboBox->QObject::setObjectName(QString::fromStdString(name));
+    comboBox->setCurrentIndex(selected);
+    QObject::connect(comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
+                     this, &QWidgetHandler::receiveOption);
+    auto gridLayout{dynamic_cast<QFormLayout*>(layout)};
+    gridLayout->addRow(QString::fromStdString(name), comboBox);
 }
 
 // overloaded helper from std::variant documentation
@@ -94,8 +85,8 @@ template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
 template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>; // not needed as of C++20
 QWidget* QWidgetHandler::createQWidgetFromParameters(const Parameters& parameters)
 {
-    QWidget *widget = new QWidget();
-    widget->setLayout(new QVBoxLayout());
+    auto widget{new QWidget()};
+    widget->setLayout(new QFormLayout());
 
     for(const auto &parameter : parameters)
     {
