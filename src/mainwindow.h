@@ -2,7 +2,6 @@
 
 #include <QMainWindow>
 #include <QtCore/QVariant>
-#include "PipelineController.h"
 #include "qwidgethandler.h"
 #include "FrameSourceNavigationWidget.h"
 #include <QtWidgets/QSplitter>
@@ -11,18 +10,26 @@ namespace Ui {
     class MainWindow;
 }
 
-class MainWindow : public QMainWindow, public Observer
+using ProcessorsParameters = std::vector<std::pair<std::string, Parameters>>;
+
+class MainWindow : public QMainWindow
 {
 Q_OBJECT
 
 public:
-    explicit MainWindow(std::shared_ptr<PipelineController> pipelineController, QWidget *parent = nullptr);
+    explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow() override;
-    void update() override;
+    void createProcessorTabs(const ProcessorsParameters& pipelineConfiguration);
+    void setInputImage(const cv::Mat& image);
+    void setDebugImage(unsigned int processorIndex, const cv::Mat& image);
+    void setTotalFrames(unsigned int totalFrames);
 
 private:
     Ui::MainWindow *ui;
-    std::shared_ptr<PipelineController> controller;
     QTabWidget tabWidget;
     FrameSourceNavigationWidget frameSourceNavigation;
+
+signals:
+    void sendProcessorConfiguration(unsigned int index, const Configuration& configuration);
+    void firePipelineProcessing(unsigned int frameIndex);
 };

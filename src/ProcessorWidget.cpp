@@ -1,21 +1,16 @@
 #include <iostream>
 #include <QHBoxLayout>
 #include "ProcessorWidget.h"
-#include "easylogging++.h"
 
-ProcessorWidget::ProcessorWidget(std::shared_ptr<PipelineController> controller, int indexTab)
-        :controller(std::move(controller)), indexTab(indexTab)
+ProcessorWidget::ProcessorWidget(unsigned int processorIndex, const Parameters& processorParameters)
+        :index(processorIndex)
 {
     this->setLayout(new QVBoxLayout());
     this->layout()->addWidget(&imageLabel);
-
-    const auto parameters{this->controller->getProcessorParameters(static_cast<unsigned int>(indexTab))};
-    this->layout()->addWidget(widgetHandler.createQWidgetFromParameters(parameters));
+    this->layout()->addWidget(widgetHandler.createQWidgetFromParameters(processorParameters));
 
     QObject::connect(&widgetHandler, &QWidgetHandler::configureProcessor,
                      this, &ProcessorWidget::configureProcessor);
-
-    this->controller->firePipelineProcessing();
 }
 
 void ProcessorWidget::configureProcessor(const QString& parameterName, const QVariant& parameterValue)
@@ -38,8 +33,7 @@ void ProcessorWidget::configureProcessor(const QString& parameterName, const QVa
         throw std::invalid_argument("Processor widget receive unknown parameter: "+std::string(parameterValue.typeName()));
     }
 
-    controller->configureProcessor(static_cast<unsigned int>(indexTab), configuration);
-    controller->firePipelineProcessing();
+    emit sendProcessorConfiguration(index, configuration);
 }
 
 void ProcessorWidget::setDebugImage(const cv::Mat& image)

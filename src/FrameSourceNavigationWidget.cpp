@@ -2,23 +2,20 @@
 #include "FrameSourceNavigationWidget.h"
 #include "easylogging++.h"
 
-FrameSourceNavigationWidget::FrameSourceNavigationWidget(std::shared_ptr<PipelineController> controller)
-        :slider(Qt::Horizontal), controller(std::move(controller))
+FrameSourceNavigationWidget::FrameSourceNavigationWidget()
+        :slider(Qt::Horizontal)
 {
-    slider.setMaximum(this->controller->getTotalFrames()-1);
-
-    QObject::connect(&slider, &QSlider::valueChanged,
-            this, &FrameSourceNavigationWidget::sliderValueChanged);
-    QObject::connect(&slider, &QSlider::sliderReleased,
-            this, &FrameSourceNavigationWidget::sliderReleased);
-
     this->setLayout(new QVBoxLayout());
     this->layout()->addWidget(&originalImageLabel);
     this->layout()->addWidget(&slider);
     this->layout()->addWidget(&indexLabel);
 
-    originalImageLabel.setImage(this->controller->getCurrentLoadedImage());
     indexLabel.setText(QString::number(slider.tickInterval()));
+
+    QObject::connect(&slider, &QSlider::valueChanged,
+                     this, &FrameSourceNavigationWidget::sliderValueChanged);
+    QObject::connect(&slider, &QSlider::sliderReleased,
+                     this, &FrameSourceNavigationWidget::sliderReleased);
 }
 
 void FrameSourceNavigationWidget::sliderValueChanged(int value)
@@ -35,8 +32,7 @@ void FrameSourceNavigationWidget::fireNewImage(int index)
 
     try{
         indexLabel.setText(QString::number(index));
-        controller->setFrameSourceIndex(index);
-        controller->firePipelineProcessing();
+        emit firePipelineProcessing(index);
     }catch(const std::exception& e)
     {
         LOG(WARNING) << "Not possible to process image at index: " << index <<
@@ -52,4 +48,9 @@ void FrameSourceNavigationWidget::sliderReleased()
 void FrameSourceNavigationWidget::setOriginalImage(const cv::Mat &image)
 {
     originalImageLabel.setImage(image);
+}
+
+void FrameSourceNavigationWidget::setTotalFrames(unsigned int totalFrames)
+{
+    slider.setMaximum(static_cast<int>(totalFrames));
 }

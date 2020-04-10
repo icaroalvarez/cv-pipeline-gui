@@ -1,4 +1,9 @@
 {
-  "input_image_path": "/home/ialvarez/Downloads/solidWhiteRight.mp4",
-  "image_processors_to_be_loaded": ["adaptive_threshold", "roi", "resize"]
+  "frame_source_path": "/home/ialvarez/Downloads/solidWhiteRight.mp4",
+  "image_processors": [
+    {
+      "name": "roi",
+      "configuration": []
+    }
+  ]
 }

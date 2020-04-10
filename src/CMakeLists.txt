@@ -26,6 +26,7 @@ set(source_files
         qwidgethandler
         ProcessorWidget
         FrameSourceNavigationWidget
+        Controller
         )
 
 set(FORMS

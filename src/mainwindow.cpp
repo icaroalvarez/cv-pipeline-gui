@@ -3,22 +3,13 @@
 #include "ProcessorWidget.h"
 #include "easylogging++.h"
 
-MainWindow::MainWindow(std::shared_ptr<PipelineController> pipelineController, QWidget *parent) :
+MainWindow::MainWindow(QWidget *parent) :
         QMainWindow(parent),
-        ui(new Ui::MainWindow),
-        controller{std::move(pipelineController)},
-        frameSourceNavigation(controller)
+        ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     ui->centralWidget->setLayout(new QHBoxLayout());
     ui->centralWidget->layout()->setSizeConstraint(QLayout::SetMinimumSize);
-
-    // create tabs with each processors processor
-    for(const auto &processor : controller->getPipelineDescription())
-    {
-        auto* processorWidget{new ProcessorWidget(controller, tabWidget.count())};
-        tabWidget.addTab(processorWidget, QString::fromStdString(processor));
-    }
 
     // add widgets to splitter
     auto *splitter{new QSplitter()};
@@ -28,8 +19,8 @@ MainWindow::MainWindow(std::shared_ptr<PipelineController> pipelineController, Q
     splitter->setStretchFactor(0, 1);
     splitter->setStretchFactor(1, 5);
 
-    // register main window as an observer of controller to be notified when image processing is finished
-    frameSourceNavigation.sliderReleased();
+    QObject::connect(&frameSourceNavigation, &FrameSourceNavigationWidget::firePipelineProcessing,
+                     this, &MainWindow::firePipelineProcessing);
 }
 
 MainWindow::~MainWindow()
@@ -37,19 +28,33 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::update()
+void MainWindow::createProcessorTabs(const ProcessorsParameters& processorsParameters)
 {
-    frameSourceNavigation.setOriginalImage(controller->getCurrentLoadedImage());
-    for(int processorImageIndex = 0; processorImageIndex < tabWidget.count(); processorImageIndex++)
+    for(const auto& processorParameters : processorsParameters)
     {
-        try
-        {
-            const auto debugImage{controller->getDebugImage(static_cast<unsigned int>(processorImageIndex))};
-            const auto processorWidget{dynamic_cast<ProcessorWidget *>(tabWidget.widget(processorImageIndex))};
-            processorWidget->setDebugImage(debugImage);
-        }catch(const std::exception& e)
-        {
-            LOG(WARNING) << e.what();
-        }
+        const auto& processorName{std::get<std::string>(processorParameters)};
+        const auto& parameters{std::get<Parameters>(processorParameters)};
+        auto* processorWidget{new ProcessorWidget(tabWidget.count(), parameters)};
+        tabWidget.addTab(processorWidget, QString::fromStdString(processorName));
+
+        QObject::connect(processorWidget, &ProcessorWidget::sendProcessorConfiguration,
+                this, &MainWindow::sendProcessorConfiguration);
     }
+}
+
+void MainWindow::setInputImage(const cv::Mat& image)
+{
+    frameSourceNavigation.setOriginalImage(image);
+}
+
+void MainWindow::setDebugImage(unsigned int processorIndex, const cv::Mat &image)
+{
+    auto widget{tabWidget.widget(static_cast<int>(processorIndex))};
+    const auto processorWidget{dynamic_cast<ProcessorWidget*>(widget)};
+    processorWidget->setDebugImage(image);
+}
+
+void MainWindow::setTotalFrames(unsigned int totalFrames)
+{
+    frameSourceNavigation.setTotalFrames(totalFrames);
 }
