@@ -6,6 +6,8 @@ class QLabelMat: public QLabel
 {
 public:
     void setImage(const cv::Mat& image);
+    QSize sizeHint() const override;
+    QSize minimumSizeHint() const override;
 
 public slots:
     void resizeEvent(QResizeEvent *) override;

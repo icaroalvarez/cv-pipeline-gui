@@ -7,6 +7,7 @@ ProcessorWidget::ProcessorWidget(unsigned int processorIndex, const Parameters& 
 {
     this->setLayout(new QVBoxLayout());
     this->layout()->addWidget(&imageLabel);
+    imageLabel.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     this->layout()->addWidget(widgetHandler.createQWidgetFromParameters(processorParameters));
 
     QObject::connect(&widgetHandler, &QWidgetHandler::configureProcessor,

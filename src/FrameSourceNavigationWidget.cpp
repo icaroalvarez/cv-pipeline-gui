@@ -7,6 +7,7 @@ FrameSourceNavigationWidget::FrameSourceNavigationWidget()
 {
     this->setLayout(new QVBoxLayout());
     this->layout()->addWidget(&originalImageLabel);
+    originalImageLabel.setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     auto navigationWidget{new QWidget()};
     navigationWidget->setLayout(new QHBoxLayout());
@@ -30,8 +31,6 @@ void FrameSourceNavigationWidget::sliderValueChanged(int value)
 
 void FrameSourceNavigationWidget::fireNewImage(int index)
 {
-    LOG(INFO) << "Slider value changed: " << index;
-
     try{
         indexLabel.setText(QString::number(index)+("/")+totalFramesString);
         emit firePipelineProcessing(index);

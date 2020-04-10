@@ -2,7 +2,7 @@
 #include <opencv2/imgproc.hpp>
 #include <QDebug>
 
-void QLabelMat::resizeEvent(QResizeEvent * e)
+void QLabelMat::resizeEvent(QResizeEvent* e)
 {
     if(!qImage.isNull())
     {
@@ -40,6 +40,19 @@ void QLabelMat::setImage(const cv::Mat& image)
 
 void QLabelMat::showFrame()
 {
-    setPixmap(QPixmap::fromImage(qImage).scaled(QSize(this->width(), this->height()),
-                                              Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    auto scaled{QPixmap::fromImage(qImage).scaled(this->size() * devicePixelRatioF(),
+                                                  Qt::KeepAspectRatio,
+                                                  Qt::SmoothTransformation)};
+    scaled.setDevicePixelRatio(devicePixelRatioF());
+    setPixmap(scaled);
+}
+
+QSize QLabelMat::minimumSizeHint() const
+{
+    return {0, 0};
+}
+
+QSize QLabelMat::sizeHint() const
+{
+    return size();
 }

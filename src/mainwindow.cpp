@@ -9,17 +9,14 @@ MainWindow::MainWindow(QWidget *parent) :
         ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->centralWidget->setLayout(new QHBoxLayout());
-    ui->centralWidget->layout()->setSizeConstraint(QLayout::SetMinimumSize);
 
-    // add widgets to splitter
-    auto *splitter{new QSplitter()};
+    // central splitter widget
+    auto splitter{new QSplitter()};
     splitter->addWidget(&frameSourceNavigation);
     splitter->addWidget(&tabWidget);
-    ui->centralWidget->layout()->addWidget(splitter);
-    splitter->setStretchFactor(0, 1);
-    splitter->setStretchFactor(1, 5);
+    setCentralWidget(splitter);
 
+    // pipeline menu
     auto pipelineMenu{this->menuBar()->addMenu(tr("&Pipeline"))};
     auto savePipelineConfigurationAction{new QAction(tr("&Save configuration..."), this)};
     savePipelineConfigurationAction->setStatusTip(tr("Save current configuration to file"));
@@ -42,6 +39,7 @@ void MainWindow::createProcessorTabs(const ProcessorsParameters& processorsParam
         const auto& processorName{std::get<std::string>(processorParameters)};
         const auto& parameters{std::get<Parameters>(processorParameters)};
         auto* processorWidget{new ProcessorWidget(tabWidget.count(), parameters)};
+        //processorWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         tabWidget.addTab(processorWidget, QString::fromStdString(processorName));
 
         QObject::connect(processorWidget, &ProcessorWidget::sendProcessorConfiguration,

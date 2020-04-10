@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
     controller->loadPipelineConfiguration(configurationFilePath);
     window->show();
     controller->firePipelineProcessing();
-    //window.setWindowState(Qt::WindowMaximized);
+    window->setWindowState(Qt::WindowMaximized);
 
     return a.exec();
 }
