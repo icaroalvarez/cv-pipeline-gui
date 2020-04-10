@@ -7,10 +7,12 @@ FrameSourceNavigationWidget::FrameSourceNavigationWidget()
 {
     this->setLayout(new QVBoxLayout());
     this->layout()->addWidget(&originalImageLabel);
-    this->layout()->addWidget(&slider);
-    this->layout()->addWidget(&indexLabel);
 
-    indexLabel.setText(QString::number(slider.tickInterval()));
+    auto navigationWidget{new QWidget()};
+    navigationWidget->setLayout(new QHBoxLayout());
+    navigationWidget->layout()->addWidget(&slider);
+    navigationWidget->layout()->addWidget(&indexLabel);
+    this->layout()->addWidget(navigationWidget);
 
     QObject::connect(&slider, &QSlider::valueChanged,
                      this, &FrameSourceNavigationWidget::sliderValueChanged);
@@ -31,7 +33,7 @@ void FrameSourceNavigationWidget::fireNewImage(int index)
     LOG(INFO) << "Slider value changed: " << index;
 
     try{
-        indexLabel.setText(QString::number(index));
+        indexLabel.setText(QString::number(index)+("/")+totalFramesString);
         emit firePipelineProcessing(index);
     }catch(const std::exception& e)
     {
@@ -52,5 +54,7 @@ void FrameSourceNavigationWidget::setOriginalImage(const cv::Mat &image)
 
 void FrameSourceNavigationWidget::setTotalFrames(unsigned int totalFrames)
 {
+    totalFramesString = QString::number(totalFrames);
     slider.setMaximum(static_cast<int>(totalFrames));
+    indexLabel.setText(QString::number(slider.value())+("/")+totalFramesString);
 }

@@ -16,6 +16,7 @@ private:
     QSlider slider;
     QLabel indexLabel;
     QLabelMat originalImageLabel;
+    QString totalFramesString;
 
 public slots:
     void sliderValueChanged(int value);
