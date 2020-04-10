@@ -38,8 +38,8 @@ void QWidgetHandler::addIntControlTo(QLayout *layout, const std::string& name, i
     gridLayout->addRow(QString::fromStdString(name), spinBox);
 }
 
-void QWidgetHandler::addFloatControlTo(QLayout *layout, const std::string& name, float value, float minValue,
-                                       float maxValue, float step, int decimals)
+void QWidgetHandler::addDoubleControlTo(QLayout *layout, const std::string& name, double value, double minValue,
+                                        double maxValue, double step, int decimals)
 {
     auto spinBox{new QDoubleSpinBox()};
     spinBox->setDecimals(decimals);
@@ -92,22 +92,23 @@ QWidget* QWidgetHandler::createQWidgetFromParameters(const Parameters& parameter
     {
         const auto parameterName{parameter.first};
         std::visit(overloaded{
-                [&](IntegerParameter integerParameter)
+                [&](const IntegerParameter& integerParameter)
                 {
                     addIntControlTo(widget->layout(), parameterName, integerParameter.value,
                                     integerParameter.minValue, integerParameter.maxValue);
                 },
-                [&](DecimalParameter decimalParameter)
+                [&](const DecimalParameter& decimalParameter)
                 {
-                    addFloatControlTo(widget->layout(), parameterName, decimalParameter.value,
-                                      decimalParameter.minValue, decimalParameter.maxValue,
-                                      decimalParameter.incrementalStep, decimalParameter.decimalsPlaces);
+                    addDoubleControlTo(widget->layout(), parameterName, decimalParameter.value,
+                                       decimalParameter.minValue, decimalParameter.maxValue,
+                                       decimalParameter.incrementalStep,
+                                       static_cast<int>(decimalParameter.decimalsPlaces));
                 },
                 [&](bool value)
                 {
                     addBooleanControlTo(widget->layout(), parameterName, value);
                 },
-                [&](OptionsParameter optionsParameter)
+                [&](const OptionsParameter& optionsParameter)
                 {
                     addOptionsControlTo(widget->layout(), parameterName,
                                         optionsParameter.options, optionsParameter.selectedOptionIndex);

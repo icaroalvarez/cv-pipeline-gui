@@ -13,8 +13,8 @@ public:
     QWidget* createQWidgetFromParameters(const Parameters& parameters);
 
 private:
-    void addFloatControlTo(QLayout *layout, const std::string& name, float value, float minValue,
-                           float maxValue, float step, int decimals);
+    void addDoubleControlTo(QLayout *layout, const std::string& name, double value, double minValue,
+                            double maxValue, double step, int decimals);
 
     void addIntControlTo(QLayout *layout, const std::string& name, int value, int minValue, int maxValue);
 
