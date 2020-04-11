@@ -49,12 +49,107 @@
         {
             "configuration": [
                 {
-                    "parameter_name": "output",
-                    "parameter_type": "options",
-                    "value": 0
+                    "parameter_name": "ratio",
+                    "parameter_type": "decimal",
+                    "value": 3.0
+                },
+                {
+                    "parameter_name": "threshold",
+                    "parameter_type": "integer",
+                    "value": 100
+                },
+                {
+                    "parameter_name": "l2_gradient",
+                    "parameter_type": "boolean",
+                    "value": false
+                },
+                {
+                    "parameter_name": "aperture_size",
+                    "parameter_type": "integer",
+                    "value": 3
                 }
             ],
-            "name": "color_space"
+            "name": "canny_edge_detector"
+        },
+        {
+            "configuration": [
+                {
+                    "parameter_name": "bottom_left_x",
+                    "parameter_type": "integer",
+                    "value": 0
+                },
+                {
+                    "parameter_name": "top_left_x",
+                    "parameter_type": "integer",
+                    "value": 0
+                },
+                {
+                    "parameter_name": "bottom_right_x",
+                    "parameter_type": "integer",
+                    "value": 953
+                },
+                {
+                    "parameter_name": "top_left_y",
+                    "parameter_type": "integer",
+                    "value": 389
+                },
+                {
+                    "parameter_name": "bottom_right_y",
+                    "parameter_type": "integer",
+                    "value": 541
+                },
+                {
+                    "parameter_name": "bottom_left_y",
+                    "parameter_type": "integer",
+                    "value": 540
+                },
+                {
+                    "parameter_name": "top_right_x",
+                    "parameter_type": "integer",
+                    "value": 479
+                },
+                {
+                    "parameter_name": "top_right_y",
+                    "parameter_type": "integer",
+                    "value": 298
+                }
+            ],
+            "name": "roi"
+        },
+        {
+            "configuration": [
+                {
+                    "parameter_name": "threshold",
+                    "parameter_type": "integer",
+                    "value": 94
+                },
+                {
+                    "parameter_name": "mode",
+                    "parameter_type": "options",
+                    "value": 1
+                },
+                {
+                    "parameter_name": "min_theta_degrees",
+                    "parameter_type": "integer",
+                    "value": 0
+                },
+                {
+                    "parameter_name": "max_line_gap",
+                    "parameter_type": "integer",
+                    "value": 120
+                },
+                {
+                    "parameter_name": "max_theta_degrees",
+                    "parameter_type": "integer",
+                    "value": 360
+                },
+                {
+                    "parameter_name": "min_line_length",
+                    "parameter_type": "integer",
+                    "value": 300
+                }
+            ],
+            "name": "hough_lines"
         }
     ]
 }
