@@ -1,5 +1,5 @@
 {
-    "frame_source_path": "/home/ialvarez/Downloads/solidWhiteRight.mp4",
+    "frame_source_path": "/home/ialvarez/Code/panoramix-qt/fixtures/solidWhiteRight.mp4",
     "image_processors": [
         {
             "configuration": [
