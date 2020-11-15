@@ -12,7 +12,6 @@ class Controller: public QObject, public PipelineObserver, public std::enable_sh
 {
 Q_OBJECT
 public:
-
     static std::shared_ptr<Controller> createController(std::shared_ptr<MainWindow> mainWindow);
 
     void loadPipelineConfiguration(const std::string& configurationFilePath);

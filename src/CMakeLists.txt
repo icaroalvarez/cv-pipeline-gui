@@ -41,11 +41,9 @@ add_executable(gui
         )
 
 target_link_libraries(gui PRIVATE
-        panoramix
-        image_processors
+        cv-pipeline
         Qt5::Widgets
         CONAN_PKG::opencv
-        CONAN_PKG::easyloggingpp
         )
 
 target_include_directories(gui PRIVATE

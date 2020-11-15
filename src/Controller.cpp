@@ -1,4 +1,3 @@
-#include <Registerer.h>
 #include "Controller.h"
 #include "easylogging++.h"
 
@@ -7,8 +6,6 @@ Controller::Controller(std::shared_ptr<MainWindow> mainWindow)
          mainWindow{std::move(mainWindow)},
          totalPipelineProcessors{0}
 {
-    Registerer::registerProcessors(pipelineController);
-
     QObject::connect(this->mainWindow.get(), &MainWindow::sendProcessorConfiguration,
                      this, &Controller::receiveProcessorConfiguration);
 
@@ -33,7 +30,7 @@ void Controller::loadPipelineConfiguration(const std::string &configurationFileP
     mainWindow->setTotalFrames(pipelineController->getTotalFrames());
 
     ProcessorsParameters processorsParameters;
-    for(int i=0; i < pipelineConfiguration.imageProcessors.size(); i++)
+    for(std::size_t i=0; i < pipelineConfiguration.imageProcessors.size(); i++)
     {
         processorsParameters.emplace_back(std::get<std::string>(pipelineConfiguration.imageProcessors[i]),
                                           pipelineController->getProcessorParameters(i));
@@ -45,7 +42,7 @@ void Controller::update()
 {
     mainWindow->setInputImage(pipelineController->getCurrentLoadedImage());
 
-    for(auto processorImageIndex = 0; processorImageIndex < totalPipelineProcessors; processorImageIndex++)
+    for(std::size_t processorImageIndex = 0; processorImageIndex < totalPipelineProcessors; processorImageIndex++)
     {
         mainWindow->setDebugImage(processorImageIndex, pipelineController->getDebugImageFrom(processorImageIndex));
     }

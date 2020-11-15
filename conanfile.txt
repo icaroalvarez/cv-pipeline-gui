@@ -9,4 +9,4 @@ jsonformoderncpp/3.7.3@vthiery/stable
 cmake
 
 [options]
-opencv:ffmpeg=True
+#opencv:ffmpeg=True
